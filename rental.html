@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Checkout - PustakaDigital Library System</title>
+    <link rel="shortcut icon" href="booklogo.png" type="image/png">
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .account-dropdown {
+            position: relative;
+        }
+
+        .account-btn {
+            width: 42px;
+            height: 42px;
+            border-radius: 999px;
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 19px;
+            border: 3px solid #eef2ff;
+            box-shadow: 0 8px 20px rgba(79, 70, 229, 0.22);
+            transition: all 0.2s ease;
+            text-decoration: none;
+        }
+
+        .account-btn:hover {
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 12px 26px rgba(79, 70, 229, 0.32);
+        }
+
+        .account-menu {
+            position: absolute;
+            top: 52px;
+            right: 0;
+            width: 250px;
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 18px;
+            box-shadow: 0 20px 45px rgba(15, 23, 42, 0.18);
+            padding: 14px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(8px);
+            transition: all 0.22s ease;
+            z-index: 999;
+        }
+
+        .account-dropdown:hover .account-menu,
+        .account-dropdown.active .account-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .quick-link-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 9px 10px;
+            border-radius: 12px;
+            color: #475569;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            text-decoration: none;
+        }
+
+        .quick-link-row:hover {
+            background: #eef2ff;
+            color: #4f46e5;
+        }
+
+        .mobile-menu {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .mobile-menu.show {
+            max-height: 760px;
+        }
+
+        /* Customize Scrollbar for Cart List */
+        .thin-scroll::-webkit-scrollbar {
+            width: 5px;
+        }
+        .thin-scroll::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .account-btn {
+                width: 38px;
+                height: 38px;
+                font-size: 16px;
+            }
+
+            .account-menu {
+                right: -70px;
+                width: 230px;
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 flex flex-col min-h-screen overflow-x-hidden">
+
+    <header class="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
+        <div class="max-w-7xl mx-auto min-h-16 flex items-center justify-between px-4 md:px-12">
+            
+            <div class="flex items-center">
+                <i class="fa-solid fa-book-bookmark text-indigo-600 text-xl md:text-2xl mr-2 md:mr-3"></i>
+                <span class="text-lg md:text-xl font-bold tracking-wider text-slate-900">
+                    Pustaka<span class="text-indigo-600">Digital</span>
+                </span>
+            </div>
+            
+            <nav class="hidden md:flex items-center space-x-1">
+                <a href="home.html" id="nav-home" class="px-4 py-2 text-sm font-medium text-gray-600 hover:text-slate-900 hover:bg-gray-50 rounded-xl transition">Home</a>
+                <a href="dashboard.html" id="nav-dashboard" class="px-4 py-2 text-sm font-medium text-gray-600 hover:text-slate-900 hover:bg-gray-50 rounded-xl transition">Dashboard</a>
+                <a href="product.html" id="nav-product" class="px-4 py-2 text-sm font-semibold rounded-xl bg-indigo-50 text-indigo-600 transition">Product</a>
+                <a href="contact.html" id="nav-contact" class="px-4 py-2 text-sm font-medium text-gray-600 hover:text-slate-900 hover:bg-gray-50 rounded-xl transition">Contact Us</a>
+            </nav>
+
+            <div class="hidden md:flex items-center space-x-4">
+
+                <div class="account-dropdown">
+                    <a href="user.html#profile-tab" class="account-btn" title="Account">
+                        <i class="fa-solid fa-user"></i>
+                    </a>
+
+                    <div class="account-menu">
+                        <div class="flex items-center gap-3 pb-3 border-b border-gray-100 mb-2">
+                            <div class="w-10 h-10 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center text-lg">
+                                <i class="fa-solid fa-user-circle"></i>
+                            </div>
+                            <div>
+                                <h4 id="account-user-name" class="text-sm font-bold text-gray-900 leading-tight">User Account</h4>
+                                <p id="account-user-desc" class="text-xs text-gray-400">Profile, donation and membership</p>
+                            </div>
+                        </div>
+
+                        <a href="user.html#profile-tab" class="quick-link-row">
+                            <i class="fa-solid fa-id-card text-indigo-500 w-4"></i>
+                            <span id="quick-profile">Edit Profile</span>
+                        </a>
+
+                        <a href="user.html#donate-tab" class="quick-link-row">
+                            <i class="fa-solid fa-hand-holding-heart text-emerald-500 w-4"></i>
+                            <span id="quick-donation">Book Donation</span>
+                        </a>
+
+                        <a href="user.html#membership-tab" class="quick-link-row">
+                            <i class="fa-solid fa-crown text-amber-500 w-4"></i>
+                            <span id="quick-membership">Membership</span>
+                        </a>
+
+                        <a href="user.html#settings-tab" class="quick-link-row">
+                            <i class="fa-solid fa-sliders text-slate-500 w-4"></i>
+                            <span id="quick-settings">Account Settings</span>
+                        </a>
+                    </div>
+                </div>
+
+                <a href="rental.html" class="relative p-2 text-indigo-600 transition bg-indigo-50 rounded-xl border border-indigo-100 block">
+                    <i class="fa-solid fa-basket-shopping text-lg"></i>
+                    <span id="cart-badge" class="absolute -top-1 -right-1 bg-indigo-600 text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full shadow-sm">0</span>
+                </a>
+
+                <div class="bg-gray-100 p-1 rounded-xl flex items-center border border-gray-200">
+                    <button onclick="changeLanguage('en')" id="btn-lang-en" class="px-2.5 py-1 text-xs font-bold rounded-lg transition bg-white text-indigo-600 shadow-sm">EN</button>
+                    <button onclick="changeLanguage('ms')" id="btn-lang-ms" class="px-2.5 py-1 text-xs font-bold rounded-lg transition text-gray-500 hover:text-slate-900">BM</button>
+                </div>
+
+                <div class="h-6 w-px bg-gray-200"></div>
+
+                <a href="index.html" onclick="logoutUser(event)" id="btn-logout" class="text-sm font-medium text-red-600 hover:text-red-700 bg-red-50 hover:bg-red-100 px-3 py-1.5 rounded-xl transition">
+                    <i class="fa-solid fa-right-from-bracket mr-1"></i>
+                    <span>Logout</span>
+                </a>
+            </div>
+
+            <div class="flex md:hidden items-center space-x-2">
+                <a href="rental.html" class="relative p-2 text-indigo-600 transition bg-indigo-50 rounded-xl border border-indigo-100 block">
+                    <i class="fa-solid fa-basket-shopping text-base"></i>
+                    <span id="cart-badge-mobile" class="absolute -top-1 -right-1 bg-indigo-600 text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full shadow-sm">0</span>
+                </a>
+
+                <button onclick="toggleMobileMenu()" id="mobile-menu-btn" class="w-10 h-10 bg-gray-100 border border-gray-200 rounded-xl text-gray-700 flex items-center justify-center">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+            </div>
+        </div>
+
+        <div id="mobile-menu" class="mobile-menu md:hidden bg-white border-t border-gray-100">
+            <div class="px-4 py-4 space-y-3">
+                <a href="home.html" id="m-nav-home" class="block px-4 py-2 rounded-xl text-sm font-medium text-gray-600 hover:bg-gray-50">Home</a>
+                <a href="dashboard.html" id="m-nav-dashboard" class="block px-4 py-2 rounded-xl text-sm font-medium text-gray-600 hover:bg-gray-50">Dashboard</a>
+                <a href="product.html" id="m-nav-product" class="block px-4 py-2 rounded-xl text-sm font-semibold bg-indigo-50 text-indigo-600">Product</a>
+                <a href="contact.html" id="m-nav-contact" class="block px-4 py-2 rounded-xl text-sm font-medium text-gray-600 hover:bg-gray-50">Contact Us</a>
+
+                <div class="border-t border-gray-100 pt-3">
+                    <div class="flex items-center gap-3 px-4 py-2 bg-gray-50 rounded-xl mb-2">
+                        <div class="w-9 h-9 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center">
+                            <i class="fa-solid fa-user-circle"></i>
+                        </div>
+                        <div>
+                            <h4 id="m-account-user-name" class="text-sm font-bold text-gray-900">User Account</h4>
+                            <p id="m-account-user-desc" class="text-xs text-gray-400">Profile, donation and membership</p>
+                        </div>
+                    </div>
+
+                    <a href="user.html#profile-tab" class="quick-link-row">
+                        <i class="fa-solid fa-id-card text-indigo-500 w-4"></i>
+                        <span id="m-quick-profile">Edit Profile</span>
+                    </a>
+
+                    <a href="user.html#donate-tab" class="quick-link-row">
+                        <i class="fa-solid fa-hand-holding-heart text-emerald-500 w-4"></i>
+                        <span id="m-quick-donation">Book Donation</span>
+                    </a>
+
+                    <a href="user.html#membership-tab" class="quick-link-row">
+                        <i class="fa-solid fa-crown text-amber-500 w-4"></i>
+                        <span id="m-quick-membership">Membership</span>
+                    </a>
+
+                    <a href="user.html#settings-tab" class="quick-link-row">
+                        <i class="fa-solid fa-sliders text-slate-500 w-4"></i>
+                        <span id="m-quick-settings">Account Settings</span>
+                    </a>
+                </div>
+
+                <div class="border-t border-gray-100 pt-3 flex items-center justify-between">
+                    <div class="bg-gray-100 p-1 rounded-xl flex items-center border border-gray-200">
+                        <button onclick="changeLanguage('en')" id="m-btn-lang-en" class="px-2.5 py-1 text-xs font-bold rounded-lg transition bg-white text-indigo-600 shadow-sm">EN</button>
+                        <button onclick="changeLanguage('ms')" id="m-btn-lang-ms" class="px-2.5 py-1 text-xs font-bold rounded-lg transition text-gray-500 hover:text-slate-900">BM</button>
+                    </div>
+
+                    <a href="index.html" onclick="logoutUser(event)" id="m-btn-logout" class="text-sm font-medium text-red-600 bg-red-50 px-3 py-2 rounded-xl transition">
+                        <i class="fa-solid fa-right-from-bracket mr-1"></i>
+                        <span>Logout</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-1 max-w-7xl w-full mx-auto py-4 md:py-6 px-4 md:px-12 space-y-4">
+        
+        <div class="mb-2">
+            <h1 id="page-title" class="text-2xl md:text-3xl font-bold text-slate-900 tracking-tight">Rental Checkout</h1>
+            <p id="page-subtitle" class="text-gray-500 text-xs md:text-sm mt-1">Review your selected books and submit your rental request.</p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+            
+            <div class="lg:col-span-2 space-y-4">
+                <div class="bg-white p-4 rounded-2xl border border-gray-200 shadow-sm">
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-3">
+                        <h3 id="txt-selected-books" class="text-lg font-bold text-gray-900">Selected Books</h3>
+                        <span class="bg-indigo-50 text-indigo-600 text-xs font-bold px-3 py-1 rounded-full border border-indigo-100 w-fit">
+                            <span id="cart-counter">0</span> Item(s)
+                        </span>
+                    </div>
+                    
+                    <ul id="cart-items-list" class="space-y-2 max-h-[250px] overflow-y-auto pr-1 thin-scroll"></ul>
+
+                    <div id="empty-state" class="hidden text-center py-6 md:py-8">
+                        <i class="fa-solid fa-basket-shopping text-3xl md:text-4xl text-gray-300 mb-2"></i>
+                        <p id="txt-empty-cart" class="text-gray-500 text-sm font-medium">Your basket is empty.</p>
+                        <a href="product.html" id="btn-browse" class="mt-3 inline-block px-4 py-2 bg-indigo-50 text-indigo-600 font-semibold rounded-xl hover:bg-indigo-100 transition text-xs">
+                            Browse Catalog
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white p-4 rounded-2xl border border-gray-200 shadow-sm h-fit">
+                <form id="rentalForm" onsubmit="submitRentalRequest(event)" class="space-y-3">
+                    <div class="flex items-center space-x-2 mb-1 border-b border-gray-100 pb-2">
+                        <div class="w-8 h-8 bg-indigo-50 text-indigo-600 rounded-lg flex items-center justify-center text-sm">
+                            <i class="fa-solid fa-clipboard-user"></i>
+                        </div>
+                        <h3 id="txt-member-details" class="text-sm font-bold text-gray-900 uppercase tracking-wider">Member Details</h3>
+                    </div>
+                    
+                    <div>
+                        <label id="lbl-form-name" class="block text-[11px] md:text-xs font-semibold text-gray-700 mb-0.5">Full Name *</label>
+                        <input type="text" id="member-name" required class="w-full px-3 py-1.5 md:py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition" placeholder="John Doe">
+                    </div>
+                    
+                    <div>
+                        <label id="lbl-form-id" class="block text-[11px] md:text-xs font-semibold text-gray-700 mb-0.5">Library Member ID *</label>
+                        <input type="text" id="member-id" required class="w-full px-3 py-1.5 md:py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition" placeholder="e.g. PD-2026-XXXX">
+                    </div>
+
+                    <div>
+                        <label id="lbl-form-email" class="block text-[11px] md:text-xs font-semibold text-gray-700 mb-0.5">Email Address *</label>
+                        <input type="email" id="member-email" required class="w-full px-3 py-1.5 md:py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition" placeholder="name@example.com">
+                    </div>
+
+                    <div>
+                        <label id="lbl-form-duration" class="block text-[11px] md:text-xs font-semibold text-gray-700 mb-0.5">Rental Duration *</label>
+                        <select id="rental-duration" required class="w-full px-3 py-1.5 md:py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition">
+                            <option value="7" id="opt-duration-7">7 Days (Standard)</option>
+                            <option value="14" id="opt-duration-14">14 Days (Extended)</option>
+                        </select>
+                    </div>
+
+                    <div class="pt-2 border-t border-gray-100 mt-2">
+                        <button type="submit" id="btn-cart-submit" class="w-full py-2 text-sm font-bold bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl shadow-md transition flex items-center justify-center">
+                            Submit Request <i class="fa-solid fa-paper-plane ml-2"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+
+    </main>
+
+    <footer class="bg-white border-t border-gray-200 py-4 px-4 md:px-12 text-xs text-gray-500 shadow-inner mt-auto flex-none">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-2 text-center sm:text-left">
+            <div>
+                <div class="flex items-center justify-center sm:justify-start font-bold text-gray-950 mb-0.5">
+                    <i class="fa-solid fa-book-bookmark text-indigo-600 mr-1.5"></i>
+                    PustakaDigital
+                </div>
+                <div id="txt-copyright">&copy; 2026 PustakaDigital. All Rights Reserved.</div>
+            </div>
+
+            <div class="flex flex-wrap justify-center gap-x-4 gap-y-1 mt-1 sm:mt-0">
+                <a href="privacy.html" id="link-privacy" class="hover:text-indigo-600">Privacy Policy</a>
+                <a href="terms.html" id="link-terms" class="hover:text-indigo-600">Terms of Service</a>
+                <a href="support.html" id="link-support" class="hover:text-indigo-600">IT Support</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        let currentLang = localStorage.getItem('selected_language') || 'en';
+        let cart = JSON.parse(localStorage.getItem('library_cart')) || [];
+
+        const dictionary = {
+            en: {
+                navHome: "Home",
+                navDashboard: "Dashboard",
+                navProduct: "Product",
+                navContact: "Contact Us",
+                btnLogout: "Logout",
+
+                accountUserDesc: "Profile, donation and membership",
+                quickProfile: "Edit Profile",
+                quickDonation: "Book Donation",
+                quickMembership: "Membership",
+                quickSettings: "Account Settings",
+
+                copyright: "&copy; 2026 PustakaDigital. All Rights Reserved.",
+                linkPrivacy: "Privacy Policy",
+                linkTerms: "Terms of Service",
+                linkSupport: "IT Support",
+                
+                pageTitle: "Rental Checkout",
+                pageSubtitle: "Review your selected books and submit your rental request.",
+                txtSelectedBooks: "Selected Books",
+                txtEmptyCart: "Your basket is empty.",
+                btnBrowse: "Browse Catalog",
+                txtMemberDetails: "Member Verification Details",
+                lblFormName: "Full Name *",
+                lblFormId: "Library Member ID *",
+                lblFormEmail: "Email Address *",
+                lblFormDuration: "Rental Duration *",
+                optDuration7: "7 Days (Standard)",
+                optDuration14: "14 Days (Extended)",
+                btnCartSubmit: "Submit Request",
+                alertSuccess: "Rental request submitted successfully! Admin will review your verification details.",
+                alertEmpty: "Your basket is empty! Please go back and add at least one available book."
+            },
+
+            ms: {
+                navHome: "Utama",
+                navDashboard: "Dashboard",
+                navProduct: "Produk",
+                navContact: "Hubungi Kami",
+                btnLogout: "Log Keluar",
+
+                accountUserDesc: "Profil, sumbangan dan keahlian",
+                quickProfile: "Edit Profil",
+                quickDonation: "Sumbangan Buku",
+                quickMembership: "Keahlian",
+                quickSettings: "Tetapan Akaun",
+
+                copyright: "&copy; 2026 PustakaDigital. Hak Cipta Terpelihara.",
+                linkPrivacy: "Dasar Privasi",
+                linkTerms: "Terma Perkhidmatan",
+                linkSupport: "Sokongan IT",
+                
+                pageTitle: "Daftar Keluar Pinjaman",
+                pageSubtitle: "Semak buku pilihan anda dan hantar permohonan pinjaman.",
+                txtSelectedBooks: "Buku Yang Dipilih",
+                txtEmptyCart: "Bakul anda kosong.",
+                btnBrowse: "Semak Katalog",
+                txtMemberDetails: "Butiran Pengesahan Ahli",
+                lblFormName: "Nama Penuh *",
+                lblFormId: "ID Ahli Perpustakaan *",
+                lblFormEmail: "Alamat Emel *",
+                lblFormDuration: "Tempoh Pinjaman *",
+                optDuration7: "7 Hari (Standard)",
+                optDuration14: "14 Hari (Lanjutan)",
+                btnCartSubmit: "Hantar Permohonan",
+                alertSuccess: "Permohonan pinjaman berjaya dihantar! Admin akan menyemak butiran maklumat anda.",
+                alertEmpty: "Bakul anda kosong! Sila kembali ke katalog dan masukkan sekurang-kurangnya sebuah buku."
+            }
+        };
+
+        function getLoggedInUser() {
+            const username = localStorage.getItem('username') || localStorage.getItem('pd_username');
+
+            if (username && username.trim() !== '') {
+                return username.trim();
+            }
+
+            return 'User Account';
+        }
+
+        function toggleMobileMenu() {
+            const mobileMenu = document.getElementById('mobile-menu');
+            const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+
+            mobileMenu.classList.toggle('show');
+
+            if (mobileMenu.classList.contains('show')) {
+                mobileMenuBtn.innerHTML = '<i class="fa-solid fa-xmark"></i>';
+            } else {
+                mobileMenuBtn.innerHTML = '<i class="fa-solid fa-bars"></i>';
+            }
+        }
+
+        function prefillUserData() {
+            const fullName = localStorage.getItem('pd_fullname') || localStorage.getItem('username') || localStorage.getItem('pd_username');
+            const email = localStorage.getItem('pd_email') || '';
+            const memberId = localStorage.getItem('pd_memberid') || '';
+
+            if (fullName) {
+                document.getElementById('member-name').value = fullName;
+            }
+
+            if (email) {
+                document.getElementById('member-email').value = email;
+            }
+
+            if (memberId) {
+                document.getElementById('member-id').value = memberId;
+            }
+        }
+
+        function renderCartUI() {
+            const listContainer = document.getElementById('cart-items-list');
+            const emptyState = document.getElementById('empty-state');
+            const cartCounter = document.getElementById('cart-counter');
+            const cartBadge = document.getElementById('cart-badge');
+            const cartBadgeMobile = document.getElementById('cart-badge-mobile');
+            
+            listContainer.innerHTML = '';
+            cartCounter.textContent = cart.length;
+
+            if (cartBadge) {
+                cartBadge.textContent = cart.length;
+            }
+
+            if (cartBadgeMobile) {
+                cartBadgeMobile.textContent = cart.length;
+            }
+
+            if (cart.length === 0) {
+                emptyState.classList.remove('hidden');
+            } else {
+                emptyState.classList.add('hidden');
+                
+                cart.forEach(item => {
+                    const li = document.createElement('li');
+                    li.className = "flex justify-between items-center bg-gray-50 border border-gray-200 p-2 md:p-3 rounded-xl text-[13px] md:text-sm text-gray-900 font-medium hover:border-indigo-300 transition";
+                    li.innerHTML = `
+                        <div class="flex items-center overflow-hidden mr-3">
+                            <div class="w-8 h-8 bg-indigo-100 text-indigo-600 rounded-lg flex items-center justify-center shrink-0 mr-3 text-sm">
+                                <i class="fa-solid fa-book"></i>
+                            </div>
+                            <span class="truncate">${item.title}</span>
+                        </div>
+                        <button type="button" onclick="removeFromCart(${item.id})" class="text-red-500 hover:text-red-700 bg-red-50 hover:bg-red-100 p-1.5 rounded-lg transition shrink-0">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                    `;
+                    listContainer.appendChild(li);
+                });
+            }
+        }
+
+        function removeFromCart(bookId) {
+            cart = cart.filter(item => item.id !== bookId);
+            localStorage.setItem('library_cart', JSON.stringify(cart));
+            renderCartUI();
+        }
+
+        function submitRentalRequest(event) {
+            event.preventDefault();
+
+            const data = dictionary[currentLang];
+
+            if (cart.length === 0) {
+                alert(data.alertEmpty);
+                return;
+            }
+
+            const name = document.getElementById('member-name').value;
+            const memberId = document.getElementById('member-id').value;
+            
+            alert(`${data.alertSuccess}\n\nName: ${name}\nMember ID: ${memberId}\nTotal Books: ${cart.length}`);
+            
+            cart = [];
+            localStorage.removeItem('library_cart');
+
+            document.getElementById('rentalForm').reset();
+            renderCartUI();
+
+            window.location.href = "dashboard.html";
+        }
+
+        function updateUI() {
+            const data = dictionary[currentLang];
+            const username = getLoggedInUser();
+
+            document.getElementById('nav-home').textContent = data.navHome;
+            document.getElementById('nav-dashboard').textContent = data.navDashboard;
+            document.getElementById('nav-product').textContent = data.navProduct;
+            document.getElementById('nav-contact').textContent = data.navContact;
+            document.querySelector('#btn-logout span').textContent = data.btnLogout;
+
+            document.getElementById('m-nav-home').textContent = data.navHome;
+            document.getElementById('m-nav-dashboard').textContent = data.navDashboard;
+            document.getElementById('m-nav-product').textContent = data.navProduct;
+            document.getElementById('m-nav-contact').textContent = data.navContact;
+            document.querySelector('#m-btn-logout span').textContent = data.btnLogout;
+
+            document.getElementById('account-user-name').textContent = username;
+            document.getElementById('account-user-desc').textContent = data.accountUserDesc;
+            document.getElementById('quick-profile').textContent = data.quickProfile;
+            document.getElementById('quick-donation').textContent = data.quickDonation;
+            document.getElementById('quick-membership').textContent = data.quickMembership;
+            document.getElementById('quick-settings').textContent = data.quickSettings;
+
+            document.getElementById('m-account-user-name').textContent = username;
+            document.getElementById('m-account-user-desc').textContent = data.accountUserDesc;
+            document.getElementById('m-quick-profile').textContent = data.quickProfile;
+            document.getElementById('m-quick-donation').textContent = data.quickDonation;
+            document.getElementById('m-quick-membership').textContent = data.quickMembership;
+            document.getElementById('m-quick-settings').textContent = data.quickSettings;
+
+            document.getElementById('page-title').textContent = data.pageTitle;
+            document.getElementById('page-subtitle').textContent = data.pageSubtitle;
+            document.getElementById('txt-selected-books').textContent = data.txtSelectedBooks;
+            document.getElementById('txt-empty-cart').textContent = data.txtEmptyCart;
+            document.getElementById('btn-browse').textContent = data.btnBrowse;
+            document.getElementById('txt-member-details').textContent = data.txtMemberDetails;
+            document.getElementById('lbl-form-name').textContent = data.lblFormName;
+            document.getElementById('lbl-form-id').textContent = data.lblFormId;
+            document.getElementById('lbl-form-email').textContent = data.lblFormEmail;
+            document.getElementById('lbl-form-duration').textContent = data.lblFormDuration;
+            document.getElementById('opt-duration-7').textContent = data.optDuration7;
+            document.getElementById('opt-duration-14').textContent = data.optDuration14;
+            document.getElementById('btn-cart-submit').innerHTML = `${data.btnCartSubmit} <i class="fa-solid fa-paper-plane ml-2"></i>`;
+
+            document.getElementById('txt-copyright').innerHTML = data.copyright;
+            document.getElementById('link-privacy').textContent = data.linkPrivacy;
+            document.getElementById('link-terms').textContent = data.linkTerms;
+            document.getElementById('link-support').textContent = data.linkSupport;
+
+            activateCurrentNavbar();
+            renderCartUI();
+        }
+
+        function changeLanguage(langCode) {
+            currentLang = langCode;
+            localStorage.setItem('selected_language', langCode);
+
+            const btnEn = document.getElementById('btn-lang-en');
+            const btnMs = document.getElementById('btn-lang-ms');
+            const mBtnEn = document.getElementById('m-btn-lang-en');
+            const mBtnMs = document.getElementById('m-btn-lang-ms');
+
+            if (langCode === 'en') {
+                btnEn.className = "px-2.5 py-1 text-xs font-bold rounded-lg transition bg-white text-indigo-600 shadow-sm";
+                btnMs.className = "px-2.5 py-1 text-xs font-bold rounded-lg transition text-gray-500 hover:text-slate-900";
+
+                mBtnEn.className = "px-2.5 py-1 text-xs font-bold rounded-lg transition bg-white text-indigo-600 shadow-sm";
+                mBtnMs.className = "px-2.5 py-1 text-xs font-bold rounded-lg transition text-gray-500 hover:text-slate-900";
+            } else {
+                btnMs.className = "px-2.5 py-1 text-xs font-bold rounded-lg transition bg-white text-indigo-600 shadow-sm";
+                btnEn.className = "px-2.5 py-1 text-xs font-bold rounded-lg transition text-gray-500 hover:text-slate-900";
+
+                mBtnMs.className = "px-2.5 py-1 text-xs font-bold rounded-lg transition bg-white text-indigo-600 shadow-sm";
+                mBtnEn.className = "px-2.5 py-1 text-xs font-bold rounded-lg transition text-gray-500 hover:text-slate-900";
+            }
+
+            updateUI();
+        }
+
+        function activateCurrentNavbar() {
+            const navLinks = {
+                'home.html': 'nav-home',
+                'dashboard.html': 'nav-dashboard',
+                'product.html': 'nav-product',
+                'contact.html': 'nav-contact',
+                'wishlist.html': 'nav-product',
+                'rental.html': 'nav-product'
+            };
+
+            const mobileNavLinks = {
+                'home.html': 'm-nav-home',
+                'dashboard.html': 'm-nav-dashboard',
+                'product.html': 'm-nav-product',
+                'contact.html': 'm-nav-contact',
+                'wishlist.html': 'm-nav-product',
+                'rental.html': 'm-nav-product'
+            };
+
+            Object.values(navLinks).forEach(id => {
+                const element = document.getElementById(id);
+
+                if (element) {
+                    element.className = "px-4 py-2 text-sm font-medium text-gray-600 hover:text-slate-900 hover:bg-gray-50 rounded-xl transition";
+                }
+            });
+
+            Object.values(mobileNavLinks).forEach(id => {
+                const element = document.getElementById(id);
+
+                if (element) {
+                    element.className = "block px-4 py-2 rounded-xl text-sm font-medium text-gray-600 hover:bg-gray-50";
+                }
+            });
+
+            const currentPage = window.location.pathname.split('/').pop() || 'rental.html';
+            const activeId = navLinks[currentPage] || 'nav-product';
+            const activeElement = document.getElementById(activeId);
+
+            if (activeElement) {
+                activeElement.className = "px-4 py-2 text-sm font-semibold rounded-xl bg-indigo-50 text-indigo-600 transition";
+            }
+
+            const mobileActiveId = mobileNavLinks[currentPage] || 'm-nav-product';
+            const mobileActiveElement = document.getElementById(mobileActiveId);
+
+            if (mobileActiveElement) {
+                mobileActiveElement.className = "block px-4 py-2 rounded-xl text-sm font-semibold bg-indigo-50 text-indigo-600";
+            }
+        }
+
+        function logoutUser(event) {
+            event.preventDefault();
+
+            localStorage.removeItem('username');
+            localStorage.removeItem('pd_username');
+
+            window.location.href = "index.html";
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            prefillUserData();
+            changeLanguage(currentLang);
+        });
+    </script>
+</body>
+</html>
